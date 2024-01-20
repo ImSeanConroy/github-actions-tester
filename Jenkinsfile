@@ -29,6 +29,28 @@ pipeline {
 				sh "mvn failsafe:integration-test failsafe:verify"
 			}
 		}
+		stage('Package') {
+			steps {
+				sh "mvn package -DskipTests"
+			}
+		}
+		stage('Build Docker Image') {
+			steps {
+				script {
+					dockerImage = docker.build("imseanconroy/currency-exchange-devops:$env.BUILD_NUMBER")
+				}
+			}
+		}
+		stage('Push Docker Image') {
+			steps {
+				script {
+					docker.withRegistry('', 'docker-hub') {
+						dockerImage.push()
+						dockerImage.push('latest')
+					}
+				}
+			}
+		}
 	} 
 	post {
 		always {
