@@ -4,20 +4,29 @@ on:
     branches:
       - main
 jobs:
-  test:  
+  test:
     runs-on: ubuntu-latest
     steps:
-        - name: Get code
-          uses: actions/checkout@v4
-        - name: Cache dependencies
-          uses: actions/cache@v4
-          with:
-            path: ~/.npm
-            key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-        - name: Install dependencies
-          run: npm ci
-        - name: Run tests
-          run: 'npm run test'
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: Test code
+        id: run-tests
+        run: npm run test
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test.json
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -25,15 +34,18 @@ jobs:
       - name: Get code
         uses: actions/checkout@v4
       - name: Cache dependencies
+        id: cache
         uses: actions/cache@v4
         with:
-          path: ~/.npm
+          path: node_modules
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build project
+        id: build-website
         run: npm run build
-      - name: Upload Artifact
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: dist-files
@@ -46,5 +58,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist-files
+      - name: Output contents
+        run: ls
       - name: Deploy
-        run: echo "Deploying ..."
+        run: echo "Deploying..."
+  report:
+    if: failure()
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Output information
+        run: |
+          echo "Something went wrong"
+          echo "${{ toJson(github) }}"
