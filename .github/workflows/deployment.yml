@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+permissions: 
+  repository-projects: read
 jobs:
   test:
     runs-on: ubuntu-latest
