@@ -4,7 +4,7 @@ on:
     branches:
       - main
 permissions: 
-  repository-projects: read
+  contents: read
 jobs:
   test:
     runs-on: ubuntu-latest
