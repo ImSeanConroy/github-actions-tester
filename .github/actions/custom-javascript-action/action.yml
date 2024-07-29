@@ -1,0 +1,5 @@
+name: 'Custom Javascript Action'
+description: 'Custom Javascript Action.'
+runs:
+  using: 'node18'
+  main: 'main.js'
