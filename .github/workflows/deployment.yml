@@ -8,8 +8,6 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    # container:
-    #   image: node:16
     env:
       MONGODB_CONNECTION_PROTOCOL: mongodb
       MONGODB_CLUSTER_ADDRESS: 127.0.0.1:27017
@@ -27,15 +25,11 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+      - name: Load & cache dependencies
+        id: cached-deps
+        uses: ./.github/actions/cached-deps
+      - name: Output Information
+        run: echo "Cache used - %{{ steps.cached-deps.outputs.used-cache }}"
       - name: Test code
         id: run-tests
         run: npm run test
@@ -51,15 +45,8 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Cache dependencies
-        id: cache
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+      - name: Load & cache dependencies
+        uses: ./.github/actions/cached-deps
       - name: Build project
         id: build-website
         run: npm run build
