@@ -83,3 +83,5 @@ jobs:
         uses: actions/checkout@v4
       - name: Run custom actions
         uses: ./.github/actions/custom-javascript-action
+        with:
+          message: "Hello World!"
