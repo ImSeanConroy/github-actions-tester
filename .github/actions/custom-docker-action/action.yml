@@ -1,0 +1,9 @@
+name: 'Custom Docker Action'
+description: 'Custom Docker Action.'
+inputs:
+  message:
+    description: 'Message to be logged.'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

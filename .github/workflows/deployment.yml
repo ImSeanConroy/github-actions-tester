@@ -81,7 +81,11 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Run custom actions
+      - name: Run custom javascript actions
         uses: ./.github/actions/custom-javascript-action
         with:
-          message: "Hello World!"
+          message: "Hello World from Javascript Action!"
+      - name: Run custom docker actions
+        uses: ./.github/actions/custom-docker-action
+        with:
+          message: "Hello World from Docker Action!"

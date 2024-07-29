@@ -2,7 +2,7 @@ name: 'Custom Javascript Action'
 description: 'Custom Javascript Action.'
 inputs:
   message:
-    description: 'Message to be locked.'
+    description: 'Message to be logged.'
     required: true
 runs:
   using: 'node20'
