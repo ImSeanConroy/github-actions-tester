@@ -1,8 +1,9 @@
 name: Label Issues (Permissions Example)
-on:
-  issues:
-    types:
-      - opened
+on: workflow_dispatch
+# on:
+#   issues:
+#     types:
+#       - opened
 jobs:
   assign-label:
     permissions:
